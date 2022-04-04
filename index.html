@@ -47,22 +47,22 @@
 
 
     <!-- Enter Initial and Save Score -->
-    <section class="all-done hide" id="all-done">
+    <section class="hide" id="alldone">
         <h1>All Done!</h1>
         <p>Your final score is <span id="score"></span>.</p>
         <form id="initials">
             <label for="input">Enter Initials:</label>
             <input type="text" name="input"class="input">
-            <input type="submit" value="Submit" class="start-btn">
+            <input type="submit" value="Submit" class="start-btn" id="submitscore">
         </form>
     </section>
 
 
     <!-- Displays all High Scores -->
-    <section class="highscore hide">
+    <section class="highscore hide" id="scorelist">
         <h1>High Scores!</h1>
-        <div class="topscores" id="topscores">
-            <ul>
+        <div class="topscores" >
+            <ul id="higscore-list">
 
             </ul>
         </div>

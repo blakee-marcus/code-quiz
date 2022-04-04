@@ -30,10 +30,15 @@ var questions = [
 
 // Grab Elements from HTML Page
 var startButtonEl = document.querySelector("#start");
-var allDoneEl = document.getElementById("all-done");
+var allDoneEl = document.getElementById("alldone");
 var quizEl = document.querySelector("#quiz");
 var questionEl = document.getElementById("question");
 var answerResponseEl = document.querySelector("#response");
+var countDownEl = document.getElementById("countdown");
+var initialInput = document.getElementById("initials");
+var highscorelistEl = document.getElementById("higscore-list");
+var initialBtnEl = document.getElementById("submitscore");
+var scoreListEl = document.getElementById("scorelist");
 var btn1El = document.getElementById("btn1");
 var btn2El = document.getElementById("btn2");
 var btn3El = document.getElementById("btn3");
@@ -42,12 +47,39 @@ var btn4El = document.getElementById("btn4");
 
 // variables
 var currentQuestion = 0;
+var timeLeft = 75;
 
+
+
+// reset time and starting question
+var reset = function() {
+    currentQuestion = 0;
+    timeLeft = 75;
+};
+
+// timer which decrease timeLeft by 1 every second
+var timer = setInterval(function() {
+    timeLeft--;
+    countDownEl.innerText = timeLeft;
+    if(timeLeft <= 0) {
+        clearInterval(timer);
+    
+        if(currentQuestion < questions.length - 1) {
+            endGame();
+        }
+    }
+}, 1000);
 
 //Hides PreQuiz Screen and shows quiz block
 var startGame = function() {
     startButtonEl.classList.add("hide");
     quizEl.classList.remove("hide");
+};
+
+// Hides Quiz and Shows Score Saving Block
+var endGame = function() {
+    quizEl.classList.add("hide");
+    allDoneEl.classList.remove("hide");
 };
 
 //Prints Current Question & choices and clears last answer response
@@ -69,7 +101,7 @@ var checkAnswer = function(answer) {
         checkLength();
     } else {
         answerResponseEl.innerText = "Wrong!";
-        
+        timeLeft -= 10;
     };
 };
 
@@ -103,21 +135,63 @@ var checkLength = function() {
     }
 };
 
-var endGame = function() {
-    quizEl.classList.add("hide");
-    allDoneEl.classList.remove("hide");
+//Saves Initials inputted and stores into localStorage
+
+var saveHighScore = function(event) {
+    event.preventDefault();
+
+    if (initialInput.value === "") {
+        window.alert("Please enter Initials!");
+        return;
+    }
+
+    var savedScores = localStorage.getItem("high scores");
+    var scores = JSON.parse(savedScores);
+
+    // if (savedScores === null) {
+    //     scores = [];
+    // } else {
+    //     scores = JSON.parse(savedScores)
+    // };
+
+    var newScore = {
+        initials: initialInput.value,
+        score: timeLeft
+    };
+
+    var scoresString = JSON.stringify(scores);
+   localStorage.setItem("high scores", scoresString);
+
+    showHighScores();
 };
+
+var showHighScores = function() {
+    allDoneEl.classList.add("hide");
+    scoreListEl.classList.remove("hide");
+    var savedScores = localStorage.getItem("high scores");
+    var storedScores = JSON.parse(savedScores);
+    for (let i = 0; i < storedScores.length; i++) {
+        var eachNewScore = document.createElement("li");
+        eachNewScore.innerHTML = storedScores[i].initials + ": " + storedScores[i].score;
+        highscorelistEl.appendChild(eachNewScore);
+    }
+};
+
 //quiz functionality
 var quiz = function() {
+    reset();
     startGame();
+    timer;
     showQuestions();
 };
 
 
 //Event Listeners
 startButtonEl.addEventListener("click", quiz);
+initialBtnEl.addEventListener('click', saveHighScore);
 btn1El.addEventListener('click', choice1);
 btn2El.addEventListener('click', choice2);
 btn3El.addEventListener('click', choice3);
 btn4El.addEventListener('click', choice4);
+
  
